@@ -17,7 +17,7 @@
 
 #### 1.底层使用的数据结构
 
-* Arraylist 底层使用的是**Object数组**，初始化时就会指向的会是一个static修饰的空数组，数组长度一开始为**0**，插入第一个元素时数组长度会初始化为**10**，之后每次数组空间不够进行扩容时都是增加为原来的**1.5倍**。ArrayList的空间浪费主要体现在在list列表的结尾会预留一定的容量空间(为了避免添加元素时，数组空间不够频繁申请内存)，而LinkedList的空间花费则体现在它的每一个元素都需要消耗比ArrayList更多的空间（因为要存放后继指针next和前驱指针pre以及数据）
+* Arraylist 底层使用的是**Object数组**，初始化时就会指向一个static修饰的空数组，数组长度一开始为**0**，插入第一个元素时数组长度会初始化为**10**，之后每次数组空间不够进行扩容时都是增加为原来的**1.5倍**。ArrayList的空间浪费主要体现在在list列表的结尾会预留一定的容量空间(为了避免添加元素时，数组空间不够频繁申请内存)，而LinkedList的空间花费则体现在它的每一个元素都需要消耗比ArrayList更多的空间（因为要存放后继指针next和前驱指针pre以及数据）
 
 * LinkedList 底层使用的数据结构是**双向链表**，每个节点保存了指向前驱节点和后继结点的指针。初始化时，不执行任何操作，添加第一个元素时，再去构造链表中的节点。
 
@@ -53,11 +53,11 @@ public void add(int index, E element) {
 
 **List接口**代表的是有序结合，与Set相反，List的元素是按照移动的顺序进行排列。
 
-**Cloneable接口**代表类会重新父类Object的clone()方法，支持对实例对象的clone操作。
+**Cloneable接口**代表类会重写父类Object的clone()方法，支持对实例对象的clone操作。
 
 **java.io.Serializable**接口代表类支持序列化。
 
-**RandomAccess**是一个标示性接口，代表ArrayList支持快速访问，而LinkedList不支持。
+**RandomAccess**是一个标识性接口，代表ArrayList支持快速访问，而LinkedList不支持。
 
 **Deque**接口是双端队列的意思，代表LinkedList支持两端元素插入和移除。
 
@@ -74,9 +74,9 @@ LinkedList<Integer>    linkedList    = new LinkedList<Integer>();
 //调用Collections的synchronizedList方法，传入一个linkedList，会返回一个SynchronizedList实例对象
 List<Integer> synchronizedList =  Collections.synchronizedList(linkedList);
 
-//调用Collections的synchronizedList方法，ArrayList，返回一个SynchronizedRandomAccessList实例对象
+//调用Collections的synchronizedList方法，传入一个arrayList，返回一个SynchronizedRandomAccessList实例对象
 ArrayList<Integer>    arrayList    = new ArrayList<Integer>();
-List<Integer> synchronizedRandomAccessList =  Collections.synchronizedList(linkedList);
+List<Integer> synchronizedRandomAccessList =  Collections.synchronizedList(arrayList);
 ```
 
 (Collections.synchronizedList()方法会判断传入的对象是否实现了 RandomAccess接口，是的话，会返回一个SynchronizedRandomAccessList对象，SynchronizedRandomAccessList是SynchronizedList的子类，只是会多一个以线程安全的方式获取子数组的方法)。
@@ -130,7 +130,7 @@ CopyOnWriteArrayList跟ArrayList类似，都是实现了List接口，只不过�
    private transient Object[] elementData;//transient
 ```
 
-可以看到区别主要在于CopyOnWriteArrayList的Object是使用volatile来修饰的，volatile可以使变量具备内存可见性，一个线程在工作内存中对变量进行修改后，会立即更新到物理内存，并且使得其他线程中的这个变量缓存失效，其他线程在读取会去物理内存中读取最新的值。（volatile修饰的是指向数组的引用变量，所以对数组添加元素，删除元素不会改变引用，只有对数组变量array重新赋值才会改变。所以为了保证内存可见性，CopyOnWriteArrayList.add()方法在添加元素时，都是复制出一个新数组，进行修改操作后，再设置到就数组上）
+可以看到区别主要在于CopyOnWriteArrayList的Object是使用volatile来修饰的，volatile可以使变量具备内存可见性，一个线程在工作内存中对变量进行修改后，会立即更新到主内存，并且使得其他线程中的这个变量缓存失效，其他线程在读取会去物理内存中读取最新的值。（volatile修饰的是指向数组的引用变量，所以对数组添加元素，删除元素不会改变引用，只有对数组变量array重新赋值才会改变。所以为了保证内存可见性，CopyOnWriteArrayList.add()方法在添加元素时，都是复制出一个新数组，进行修改操作后，再设置到就数组上）
 
 注意事项:Object数组都使用transient修饰是**因为transient修饰的属性不会参与序列化**，ArrayList通过实现writeObject()和readObject()方法来自定义了序列化方法(基于反序列化时节约空间考虑，如果用默认的序列方法，源elementData数组长度为100，实际只有10个元素，反序列化时也会分配长度为100的数组，造成内存浪费。)
 
