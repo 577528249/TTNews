@@ -109,6 +109,8 @@ class CustomThread extends Thread {
         }
         System.out.println("main()方法执行完毕！");
     }
+
+    @Override
     void run() {
         System.out.println(Thread.currentThread().getName()+"线程调用了run()方法");
         for (int j = 0; j < 5; j++) {
