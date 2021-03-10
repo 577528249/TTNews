@@ -95,10 +95,10 @@ static class SynchronizedList<E>
             mutex = this;//mutex就是SynchronizedList实例自己，作为同步锁使用
         }
    
-				public E get(int index) {
+        public E get(int index) {
             synchronized (mutex) {
-            是父类中的成员变量，在父类中会将list赋值给mutex
-            		return list.get(index);
+                // 是父类中的成员变量，在父类中会将list赋值给mutex
+            	return list.get(index);
             }
         }
    
@@ -130,7 +130,7 @@ CopyOnWriteArrayList跟ArrayList类似，都是实现了List接口，只不过�
    private transient Object[] elementData;//transient
 ```
 
-可以看到区别主要在于CopyOnWriteArrayList的Object是使用volatile来修饰的，volatile可以使变量具备内存可见性，一个线程在工作内存中对变量进行修改后，会立即更新到主内存，并且使得其他线程中的这个变量缓存失效，其他线程在读取会去物理内存中读取最新的值。（volatile修饰的是指向数组的引用变量，所以对数组添加元素，删除元素不会改变引用，只有对数组变量array重新赋值才会改变。所以为了保证内存可见性，CopyOnWriteArrayList.add()方法在添加元素时，都是复制出一个新数组，进行修改操作后，再设置到就数组上）
+可以看到区别主要在于CopyOnWriteArrayList的Object是使用volatile来修饰的，volatile可以使变量具备内存可见性，一个线程在工作内存中对变量进行修改后，会立即更新到主内存，并且使得其他线程中的这个变量缓存失效，其他线程再读取会去物理内存中读取最新的值。（volatile修饰的是指向数组的引用变量，所以对数组添加元素，删除元素不会改变引用，只有对数组变量array重新赋值才会改变。所以为了保证内存可见性，CopyOnWriteArrayList.add()方法在添加元素时，都是复制出一个新数组，进行修改操作后，再设置到旧数组上）
 
 注意事项:Object数组都使用transient修饰是**因为transient修饰的属性不会参与序列化**，ArrayList通过实现writeObject()和readObject()方法来自定义了序列化方法(基于反序列化时节约空间考虑，如果用默认的序列方法，源elementData数组长度为100，实际只有10个元素，反序列化时也会分配长度为100的数组，造成内存浪费。)
 
@@ -251,7 +251,7 @@ for (int i = 0; i < arrayList.size(); i++) {
 
 ### 第3种方法 - for-each循环删除（结果：抛出异常）
 
-抛出异常的根本原因在于for-each是使用Iterator来实现遍历的，调用ArrayList.remove()方法会将modCount+1，而Iterator内部的expectedModCount确没有更新，这样在进行下次循环时调用Iterator.next()会对modCount和expectedModCount进行比较，不一致就会抛出ConcurrentModificationException异常。
+抛出异常的根本原因在于for-each是使用Iterator来实现遍历的，调用ArrayList.remove()方法会将modCount+1，而Iterator内部的expectedModCount却没有更新，这样在进行下次循环时调用Iterator.next()会对modCount和expectedModCount进行比较，不一致就会抛出ConcurrentModificationException异常。
 
 ```java
 public static void removeWayThree(ArrayList<Integer> arrayList) {
