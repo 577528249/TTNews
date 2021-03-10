@@ -459,7 +459,7 @@ static  int spread(int h) {//h是对象的hashCode
 
 ### HashMap扩容后是否需要rehash？
 
-在JDK1.8以后，不需要rehash，因为键值对的Hash值主要是根据key的hashCode()的高16位与低16位进行异或计算后得到，根据hash%length，计算得到数组的下标index，因为length是2的整数次幂，当扩容后length变为原来的两倍时，hash%(2*length)的计算结果差别在于第length位的值是1还是0，如果是0，那么在新数组中的index与旧数组的=一致，如果是1，在新数组中的index会是旧数组中的数组中的index+length。
+在JDK1.8以后，不需要rehash，因为键值对的Hash值主要是根据key的hashCode()的高16位与低16位进行异或计算后得到，根据hash%length，计算得到数组的下标index，因为length是2的整数次幂，当扩容后length变为原来的两倍时，hash%(2*length)的计算结果差别在于第length位的值是1还是0，如果是0，那么在新数组中的index与旧数组的一致，如果是1，在新数组中的index会是旧数组中的数组中的index+length。
 
 
 ### HashMap扩容是怎样扩容的，为什么都是2的N次幂的大小？
