@@ -437,7 +437,7 @@ public class Singleton {
     }  
 }  
 ```
-这种方法是缺点在于不能做到延时加载，在第一次调用getInstance()方法之前，如果Singleton类被使用到，那么就会对instance变量初始化。
+这种方法的缺点在于不能做到延时加载，在第一次调用getInstance()方法之前，如果Singleton类被使用到，那么就会对instance变量初始化。
 
 #### 第4种-使用双重检查锁定
 
@@ -884,7 +884,7 @@ FutureTask提供了cancel(boolean mayInterruptIfRunning)方法来取消任务，
     Thread threadB= new Thread(new Runnable() {
         @Override
         public void run() {
-          	//子线程进行等待，知道threadA任务执行完毕
+          	//子线程进行等待，直到threadA任务执行完毕
     				threadA.join();
             //执行threadB的任务
         }
@@ -925,7 +925,7 @@ executorService.submit(taskB);
         @Override
         public void run() {
             synchronized(object) {
-          	//子线程进行等待，知道threadA任务执行完毕
+          	//子线程进行等待，直到threadA任务执行完毕
     						object.wait();
             //执行threadB的任务
             }
