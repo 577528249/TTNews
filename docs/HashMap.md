@@ -1,6 +1,6 @@
 (PS：扫描[首页里面的二维码](README.md)进群，分享我自己在看的技术资料给大家，希望和大家一起学习进步！)
 
-下面是主要是自己看了很多Java容器类相关的博客，以及很多面经中涉及到的Java容器相关的面试题后，自己全部手写的解答，也花了一些流程图，之后会继续更新这一部分。
+下面是主要是自己看了很多Java容器类相关的博客，以及很多面经中涉及到的Java容器相关的面试题后，自己全部手写的解答，也画了一些流程图，之后会继续更新这一部分。
 
 #### [1.HashMap添加一个键值对的过程是怎么样的？](#HashMap添加一个键值对的过程是怎么样的？)
 
@@ -430,7 +430,7 @@ final V putVal(K key, V value, boolean onlyIfAbsent) {
 
 #### 6.hash值计算
 
-HashTable会扩容为2N+1，HashTable之所以容量取11，及扩容时是是2N+1，是为了保证 HashTable的长度是一个素数，因为数组的下标是用key的hashCode与数组的长度取模进行计算得到的，而当数组的长度是素数时，可以保证计算得到的数组下标分布得更加均匀，可以看看这篇文章http://zhaox.github.io/algorithm/2015/06/29/hash
+HashTable会扩容为2N+1，HashTable之所以容量取11，及扩容时是2N+1，是为了保证 HashTable的长度是一个素数，因为数组的下标是用key的hashCode与数组的长度取模进行计算得到的，而当数组的长度是素数时，可以保证计算得到的数组下标分布得更加均匀，可以看看这篇文章http://zhaox.github.io/algorithm/2015/06/29/hash
 
 ```java
 public synchronized V put(K key, V value) {
@@ -459,7 +459,7 @@ static  int spread(int h) {//h是对象的hashCode
 
 ### HashMap扩容后是否需要rehash？
 
-在JDK1.8以后，不需要rehash，因为键值对的Hash值主要是根据key的hashCode()的高16位与低16位进行异或计算后得到，根据hash%length，计算得到数组的下标index，因为length是2的整数次幂，当扩容后length变为原来的两倍时，hash%(2*length)的计算结果结果差别在于第length位的值是1还是0，如果是0，那么在新数组中的index与旧数组的一直，如果是1，在新数组中的index会是旧数组中的数组中的index+length。
+在JDK1.8以后，不需要rehash，因为键值对的Hash值主要是根据key的hashCode()的高16位与低16位进行异或计算后得到，根据hash%length，计算得到数组的下标index，因为length是2的整数次幂，当扩容后length变为原来的两倍时，hash%(2*length)的计算结果差别在于第length位的值是1还是0，如果是0，那么在新数组中的index与旧数组的一致，如果是1，在新数组中的index会是旧数组中的数组中的index+length。
 
 
 ### HashMap扩容是怎样扩容的，为什么都是2的N次幂的大小？
@@ -483,7 +483,7 @@ static  int spread(int h) {//h是对象的hashCode
   将table的length扩容为2倍，然后计算新的扩容阀值（新数组长度*0.75）。
 #### 初始化新数组
 
-会根据扩容后的数组长度初始化话一个新的数组，并且直接赋值给当前hashMap的成员变量table。
+会根据扩容后的数组长度初始化一个新的数组，并且直接赋值给当前hashMap的成员变量table。
 
 ```java
 Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
@@ -583,7 +583,7 @@ static final class CounterCell {
 
 因为HashMap是非线程安全的，默认单线程环境中使用，如果get(key)为null，可以通过containsKey(key)
 方法来判断这个key的value为null，还是不存在这个key，而ConcurrentHashMap，HashTable是线程安全的，
-在多线程操作时，因为get(key)和containsKey(key)两个操作和在一起不是一个原子性操作，可能在containsKey(key)时发现存在这个键值对，但是get(key)时，有其他线程删除了键值对，导致get(key)返回的Node是null，然后执行方法时抛出异常。所以无法区分value为null还是不存在key。
+在多线程操作时，因为get(key)和containsKey(key)两个操作合在一起不是一个原子性操作，可能在containsKey(key)时发现存在这个键值对，但是get(key)时，有其他线程删除了键值对，导致get(key)返回的Node是null，然后执行方法时抛出异常。所以无法区分value为null还是不存在key。
 至于ConcurrentHashMap，HashTable的key不能为null，主要是设计者的设计意图。
 
 ### HashSet和HashMap的区别？
@@ -631,7 +631,7 @@ if (e.hash == hash &&
 }
 ```
 
-### HashMap遍历时删除元素的有哪些实现方法？
+### HashMap遍历时删除元素有哪些实现方法？
 首先结论如下：
 
 第1种方法 - for-each遍历HashMap.entrySet，使用HashMap.remove()删除(结果：抛出异常)。
@@ -776,7 +776,7 @@ abstract class HashIterator {
 
 根据ConcurrentModificationException的文档介绍，一些对象不允许并发修改，当这些修改行为被检测到时，就会抛出这个异常。（例如一些集合不允许一个线程一边遍历时，另一个线程去修改这个集合）。
 
-一些集合（例如Collection, Vector, ArrayList，LinkedList, HashSet, Hashtable, TreeMap, AbstractList, Serialized Form）的Iterator实现中，如果提供这种并发修改异常检测，那么这些Iterator可以称为是"fail-fast Iterator"，意思是快速失败迭代器，就是检测到并发修改时，直接抛出异常，而不是继续执行，等到获取到一些错误值时在抛出异常。
+一些集合（例如Collection, Vector, ArrayList，LinkedList, HashSet, Hashtable, TreeMap, AbstractList, Serialized Form）的Iterator实现中，如果提供这种并发修改异常检测，那么这些Iterator可以称为是"fail-fast Iterator"，意思是快速失败迭代器，就是检测到并发修改时，直接抛出异常，而不是继续执行，等到获取到一些错误值时再抛出异常。
 
 异常检测主要是通过modCount和expectedModCount两个变量来实现的，
 
@@ -860,7 +860,7 @@ public static class LRUCache2 {
     }
 }
 ```
-#### LinkedHashMap是怎么保存节点的插入顺序或者访问顺序的呢？
+#### LinkedHashMap是怎么保证节点的插入顺序或者访问顺序的呢？
 默认accessOrder为false，保存的是插入顺序，插入时调用的还是父类HashMap的putVal()方法，在putVal()中创建新节点时是会调用newNode()方法来创建一个节点，在newNode()方法中会调用linkNodeLast()方法将节点添加到双向链表的尾部。
 ```java 
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,

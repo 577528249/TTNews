@@ -109,6 +109,8 @@ class CustomThread extends Thread {
         }
         System.out.println("main()方法执行完毕！");
     }
+
+    @Override
     void run() {
         System.out.println(Thread.currentThread().getName()+"线程调用了run()方法");
         for (int j = 0; j < 5; j++) {
@@ -469,7 +471,7 @@ public class Singleton {
     }  
 }  
 ```
-这种方法是缺点在于不能做到延时加载，在第一次调用getInstance()方法之前，如果Singleton类被使用到，那么就会对instance变量初始化。
+这种方法的缺点在于不能做到延时加载，在第一次调用getInstance()方法之前，如果Singleton类被使用到，那么就会对instance变量初始化。
 
 #### 第4种-使用双重检查锁定
 
@@ -913,7 +915,7 @@ threadB.start();
     Thread threadB= new Thread(new Runnable() {
         @Override
         public void run() {
-          	//子线程进行等待，知道threadA任务执行完毕
+          	//子线程进行等待，直到threadA任务执行完毕
     				threadA.join();
             //执行threadB的任务
         }
@@ -954,7 +956,7 @@ executorService.submit(taskB);
         @Override
         public void run() {
             synchronized(object) {
-          	//子线程进行等待，知道threadA任务执行完毕
+          	//子线程进行等待，直到threadA任务执行完毕
     						object.wait();
             //执行threadB的任务
             }
@@ -1132,12 +1134,12 @@ Profiler可以被复用在方法调用耗时统计的功能上，在方法的入
 
 方法调用后执行end()方法，好处是两个方法的调用不用在一个方法或者类中，比如在AOP(面 向方面编程)中，可以在方法调用前的切入点执行begin()方法，而在方法调用后的切入点执行 end()方法，这样依旧可以获得方法的执行耗时。 
 
-### 怎么实现实现一个生产者消费者？
+### 怎么实现一个生产者消费者？
 
 #### 1.使用Object.wait()和Object.notify()实现
 使用queue作为一个队列，存放数据，并且使用Synchronized同步锁，每次只能同时存在一个线程来生产或者消费数据，
 
-生成线程发现队列容量>10,生产者线程就进入waiting状态，一旦成功往队列添加数据，那么就唤醒所有线程（主要是生产者线程起来消费）。
+生产线程发现队列容量>10,生产者线程就进入waiting状态，一旦成功往队列添加数据，那么就唤醒所有线程（主要是消费者线程起来消费）。
 
 消费线程消费时，发现队列容量==0，也会主动进入waiting状态。
 
